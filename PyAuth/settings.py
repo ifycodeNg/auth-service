@@ -1,18 +1,23 @@
 
 from pathlib import Path
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
+
+
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-q1pbwd7k6r%vdpyd^xros%juz^k#@4n_#d74e9(d738)2d22mh'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -29,8 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Accounts',
 ]
-CRISPY_TEMPLATE_PACK= 'Bootstrap4'
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -117,6 +120,6 @@ AUTH_USER_MODEL = "Accounts.User"
 
 EMAIL_BACKEND = 'django_ses.SESBackend'
 
-EMAIL_ADMIN= 'testnetbot23@gmail.com'
-AWS_ACCESS_KEY_ID = 'AKIASLMR4G477LLSOCUF'
-AWS_SECRET_ACCESS_KEY = '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'
+EMAIL_ADMIN= env('EMAIL_ADMIN')
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')

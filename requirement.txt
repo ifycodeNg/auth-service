@@ -2,6 +2,7 @@ asgiref==3.6.0
 boto3==1.26.82
 botocore==1.29.82
 Django==4.1.7
+django-environ==0.10.0
 django-ses==3.3.0
 jmespath==1.0.1
 python-dateutil==2.8.2
