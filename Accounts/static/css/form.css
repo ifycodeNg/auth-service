@@ -228,6 +228,21 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
     transition: .5s all;
     background: #8DC26F;
   }
+  .social{
+    font-size: .9em;
+    color: #fff;
+    display: block;
+    background: #76b852;
+    outline: none;
+    text-align: center;
+    border: 1px solid #76b852;
+    cursor: pointer;
+    padding: 0.9em;
+    -webkit-appearance: none;
+    width: 100%;
+    margin: 2em 0;
+    letter-spacing: 4px;
+  }
   
   .agileits-top p {
     font-size: 1em;

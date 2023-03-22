@@ -17,11 +17,11 @@ environ.Env.read_env()
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS=["https://6ce5-197-211-53-51.eu.ngrok.io", "http://localhost:8000"]
+CSRF_TRUSTED_ORIGINS=["https://6ce5-197-211-53-51.eu.ngrok.io", "http://localhost:8000", "http://localhost:8000"]
 
 # Application definition
 
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Accounts',
+    'social_django',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -42,8 +43,41 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     'social_django.middleware.SocialAuthExceptionMiddleware'
 ]
 
+#SOCIAL_AUTH_TRAILING_SLASH=False
+#SOCIAL_AUTH_0AUTH_DOMAIN=config('AUTH0_DOMAIN')
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=env('AUTH0_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=env('AUTH0_CLIENT_SECRET')
+
+SOCIAL_AUTH_GITHUB_KEY = '1acb7bf670cb52134f13'
+SOCIAL_AUTH_GITHUB_SECRET = '1750c2d6b4efa2d526f6d29a0029d027e3808694'
+
+SOCIAL_AUTH_0AUTH_SCOPE=[
+    'openid',
+    'email'
+    'profile'
+]
+AUTHENTICATION_BACKENDS={
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend'
+}
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.mail.mail_validation',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.debug.debug',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'social_core.pipeline.debug.debug'
+)
 ROOT_URLCONF = 'PyAuth.urls'
 
 TEMPLATES = [
@@ -57,7 +91,11 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
+            
         },
     },
 ]
@@ -123,3 +161,9 @@ EMAIL_BACKEND = 'django_ses.SESBackend'
 EMAIL_ADMIN= env('EMAIL_ADMIN')
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+
+
+
+LOGIN_URL='/account/login'
+LOGIN_REDIRECT_URL='/account/dashboard'
+LOGOUT_URL='/'

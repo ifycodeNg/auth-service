@@ -10,12 +10,14 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from . import models
+from django.contrib.auth.models import User
 from validate_email import validate_email
 from datetime import datetime, timedelta
 from django.utils import timezone
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
 import threading
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -58,7 +60,6 @@ def send_activation_email(user, request):
 
 def signup(request):
     if request.method == 'POST':
-            uname= request.POST.get("username")
             email= request.POST.get("email")
             password= request.POST.get("password")
             confirm_password= request.POST.get("confirm_password")
@@ -70,23 +71,17 @@ def signup(request):
             if len(password) < 6:
                 messages.warning(request, 'Password should be at least 6 characters')
                 return redirect("/account/create")
-
+            if not email:
+                messages.warning(request,'Email is required')
+                return redirect("/account/create")
             if not validate_email(email):
                 messages.warning(request,'Enter a valid email address')
                 return redirect("/account/create")
-
-            if not uname:
-                messages.warning(request,'Username is required')
-                return redirect("/account/create")
-
             if User.objects.filter(email=email).exists():
                 messages.warning(request,'Email is taken, choose another one')
                 return redirect("/account/create")
-            if User.objects.filter(username=uname).exists():
-                messages.warning(request,'Username is taken, choose another one')
-                return redirect("/account/create")
             User = get_user_model()
-            create_user= User.objects.create_user(username=uname,email=email,password=password)
+            create_user= User.objects.create_user(email=email,password=password)
             create_user.save()
             send_activation_email(create_user, request)
             messages.success(request, "Account created please verify email address")
@@ -117,7 +112,7 @@ def login_route(request):
                         messages.error(request,'Email is not verified, please check your email inbox or <a href="http://{url}/account/resend_confirmation">resend Activation link </a> '.format(url=url))
                         return redirect("login")
                     if user is not None:
-                        login(request,user)
+                        login(request,user, backend='django.contrib.auth.backends.ModelBackend')
                         return redirect("home")
                     
             except User.DoesNotExist:
@@ -194,10 +189,22 @@ def logout_request(request):
     messages.info(request, "Logged out successfully!")
     return redirect("login")
 
+
+@login_required
 def dashboard(request):
-    print(request.session.session_key)
-    # request.session.set_expiry(60)
-    return render(request,"home.html")
+    id=request.user.id
+    print(id)
+    user =  get_user_model()
+    user=user.objects.get(pk=id)
+    print(user)
+    email= request.user.email
+
+    user_data={
+        "email":email,
+    }
+
+    return render(request,'home.html',user_data)
+
 def reset_password(request,encoded_pk,token):
      
 
@@ -238,6 +245,7 @@ def logout_user(request):
                          'Successfully logged out')
 
     return redirect(reverse('login'))
+
 
 def activate_user(request, encoded_pk, token):
     try:

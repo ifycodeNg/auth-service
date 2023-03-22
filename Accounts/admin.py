@@ -4,8 +4,8 @@ from .models import User
 
 class UserAdmin(admin.ModelAdmin):
 
-    list_display=('username','email','is_staff')
-    search_fields =('username','email','is_staff')
+    list_display=('email','is_staff')
+    search_fields =('email','is_staff')
     list_per_page=25
     
 
