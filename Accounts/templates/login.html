@@ -38,6 +38,9 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 					<input class="text email" type="email" name="email" placeholder="Email" required="">
 					<input class="text" type="password" name="password" placeholder="Password" required="">
 					<input type="submit" value="LOGIN">
+					<a href  = "{% url 'social:begin' 'google-oauth2' %}" class="social">Login with Google</a>
+					<a href = "{% url 'social:begin' 'github' %}" class="social">Login with GitHub</a>
+
 				</form>
 				<p>Don't have an Account? <a href="/account/create"> Sign Up!</a></p>
 			</div>
